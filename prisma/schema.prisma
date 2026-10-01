@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum AdmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum VoucherStatus {
+  UNPAID
+  PAID
+  OVERDUE
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model SchoolClass {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  tuitionFee Float
+  admissionFee Float   @default(0)
+  examFee   Float       @default(0)
+  students  Student[]
+  createdAt DateTime   @default(now())
+}
+
+model Admission {
+  id              String          @id @default(cuid())
+  applicationNo   String          @unique
+  studentName     String
+  fatherName      String
+  motherName      String?
+  dateOfBirth     DateTime
+  gender          String
+  cnicOrBForm     String?
+  address         String
+  phone           String
+  email           String?
+  classAppliedFor String
+  previousSchool  String?
+  status          AdmissionStatus @default(PENDING)
+  notes           String?
+  createdAt       DateTime        @default(now())
+  student         Student?
+}
+
+model Student {
+  id            String   @id @default(cuid())
+  rollNo        String   @unique
+  name          String
+  fatherName    String
+  dateOfBirth   DateTime
+  gender        String
+  address       String
+  phone         String
+  email         String?
+  admissionDate DateTime @default(now())
+  classId       String
+  class         SchoolClass @relation(fields: [classId], references: [id])
+  admissionId   String?     @unique
+  admission     Admission?  @relation(fields: [admissionId], references: [id])
+  status        String      @default("ACTIVE")
+  vouchers      FeeVoucher[]
+  createdAt     DateTime    @default(now())
+}
+
+model FeeVoucher {
+  id            String        @id @default(cuid())
+  voucherNo     String        @unique
+  studentId     String
+  student       Student       @relation(fields: [studentId], references: [id])
+  month         String
+  year          Int
+  tuitionFee    Float
+  admissionFee  Float         @default(0)
+  examFee       Float         @default(0)
+  otherFee      Float         @default(0)
+  fine          Float         @default(0)
+  discount      Float         @default(0)
+  totalAmount   Float
+  dueDate       DateTime
+  status        VoucherStatus @default(UNPAID)
+  paidDate      DateTime?
+  createdAt     DateTime      @default(now())
+}
