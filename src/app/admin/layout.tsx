@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { AuthSessionProvider } from "@/components/session-provider";
 import { auth } from "@/auth";
-import { LayoutDashboard, FileText, Users, GraduationCap, Receipt } from "lucide-react";
+import { LayoutDashboard, FileText, Users, GraduationCap, Receipt, Settings } from "lucide-react";
 import { SignOutButton } from "@/components/sign-out-button";
 
 const navItems = [
@@ -10,6 +10,7 @@ const navItems = [
   { href: "/admin/students", label: "Students", icon: Users },
   { href: "/admin/classes", label: "Classes", icon: GraduationCap },
   { href: "/admin/vouchers", label: "Fee Vouchers", icon: Receipt },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
